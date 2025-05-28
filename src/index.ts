@@ -7,6 +7,7 @@ if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_OWNER || !process.env.GITHU
 const githubAccessToken = process.env.GITHUB_TOKEN;
 const githubOwner = process.env.GITHUB_OWNER;
 const githubRepo = process.env.GITHUB_REPO;
+const targetBranch = process.env.TARGET_BRANCH;
 
 const toMsDiff = (t1?: string | null, t2?: string | null): number => {
     if (!t1 || !t2) {
@@ -67,7 +68,7 @@ function toReadableTimeDelta(t1?: string | null, t2?: string | null): string {
         });
 
         // if not merged or not targeting dev branch, skip
-        if (!details.data.merged || details.data.base.ref !== 'dev') {
+        if (!details.data.merged || details.data.base.ref !== targetBranch) {
             continue;
         }
 
@@ -114,6 +115,6 @@ Code changes: +${linesAdded}, -${linesRemoved}
     console.log(`Average time to merge: ${msToReadableTimeDelta(averageTimeToMerge / totalPullRequestsEvaluated)}`);
     console.log(`Average time to first review: ${msToReadableTimeDelta(averageTimeToFirstReview / totalPullRequestsEvaluated)}`);
     console.log(`Average time to second review: ${msToReadableTimeDelta(averageTimeToSecondReview / totalPullRequestsEvaluated)}`);
-    console.log(`Average lines added: ${averageLinesAdded / totalPullRequestsEvaluated}`);
-    console.log(`Average lines removed: ${averageLinesRemoved / totalPullRequestsEvaluated}`);
+    console.log(`Average lines added: ${Math.round(averageLinesAdded / totalPullRequestsEvaluated)}`);
+    console.log(`Average lines removed: ${Math.round(averageLinesRemoved / totalPullRequestsEvaluated)}`);
 })(); 
