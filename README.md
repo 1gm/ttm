@@ -32,6 +32,9 @@ GITHUB_OWNER=my-org
 GITHUB_REPO=my-repo
 GITHUB_TOKEN=my-github-token
 TARGET_BRANCH=main
+# default is 50
+NUMBER_CLOSED_PULL_REQUESTS_TO_EVALUATE=50
+```
 
 ### Running
 

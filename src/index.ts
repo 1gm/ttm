@@ -8,6 +8,7 @@ const githubAccessToken = process.env.GITHUB_TOKEN;
 const githubOwner = process.env.GITHUB_OWNER;
 const githubRepo = process.env.GITHUB_REPO;
 const targetBranch = process.env.TARGET_BRANCH;
+const numberClosedPullRequestsToEvaluate = process.env.NUMBER_CLOSED_PULL_REQUESTS_TO_EVALUATE ? Number(process.env.NUMBER_CLOSED_PULL_REQUESTS_TO_EVALUATE) : 50;
 
 const toMsDiff = (t1?: string | null, t2?: string | null): number => {
     if (!t1 || !t2) {
@@ -50,7 +51,7 @@ function toReadableTimeDelta(t1?: string | null, t2?: string | null): string {
         state: 'closed',
         sort: 'created',
         direction: 'desc',
-        per_page: 50,
+        per_page: numberClosedPullRequestsToEvaluate,
     });
 
     let totalPullRequestsEvaluated = 0;
