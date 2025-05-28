@@ -1,6 +1,6 @@
 # ttm
 
-A utility for calculating time to merge and other minor statisics for a branch on a Github repository.
+A utility for calculating time to merge and other minor statistics for a branch on a Github repository.
 
 It will calculate information about each pr merged into the target branch including author, time to merge, first review time, second review time, and code changes.
 
@@ -35,6 +35,8 @@ TARGET_BRANCH=main
 # default is 50
 NUMBER_CLOSED_PULL_REQUESTS_TO_EVALUATE=50
 ```
+
+Ensure you have the latest version of node (or at least v24, since that's what I tested it with!)
 
 ### Running
 
