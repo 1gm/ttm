@@ -34,6 +34,8 @@ GITHUB_TOKEN=my-github-token
 TARGET_BRANCH=main
 # default is 50
 NUMBER_CLOSED_PULL_REQUESTS_TO_EVALUATE=50
+# Minimum lines changed (added + removed) to be considered for evaluation
+MINIMUM_LINES_CHANGED=50
 ```
 
 Ensure you have the latest version of node (or at least v24, since that's what I tested it with!)

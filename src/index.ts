@@ -3,9 +3,10 @@ import { Octokit } from "octokit";
 if (
   !process.env.GITHUB_TOKEN ||
   !process.env.GITHUB_OWNER ||
-  !process.env.GITHUB_REPO
+  !process.env.GITHUB_REPO ||
+  !process.env.TARGET_BRANCH
 ) {
-  throw new Error("GITHUB_TOKEN, GITHUB_OWNER, and GITHUB_REPO must be set");
+  throw new Error("GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO, and TARGET_BRANCH must be set");
 }
 
 const githubAccessToken = process.env.GITHUB_TOKEN;
@@ -16,6 +17,10 @@ const numberClosedPullRequestsToEvaluate = process.env
   .NUMBER_CLOSED_PULL_REQUESTS_TO_EVALUATE
   ? Number(process.env.NUMBER_CLOSED_PULL_REQUESTS_TO_EVALUATE)
   : 50;
+const minimumLinesChanged = process.env
+  .MINIMUM_LINES_CHANGED
+  ? Number(process.env.MINIMUM_LINES_CHANGED)
+  : null;
 
 const toMsDiff = (t1?: string | null, t2?: string | null): number => {
   if (!t1 || !t2) {
@@ -43,6 +48,7 @@ function toReadableTimeDelta(t1?: string | null, t2?: string | null): string {
 }
 
 (async () => {
+  console.log(`Starting pull request evaluation for ${githubOwner}/${githubRepo} on branch ${targetBranch}`);
   const octokit = new Octokit({
     auth: githubAccessToken,
   });
@@ -82,6 +88,15 @@ function toReadableTimeDelta(t1?: string | null, t2?: string | null): string {
         continue;
       }
 
+      const linesAdded = details.data.additions;
+      const linesRemoved = details.data.deletions;
+      if (minimumLinesChanged && linesAdded + linesRemoved < minimumLinesChanged) {
+        continue;
+      }
+
+      averageLinesAdded += linesAdded;
+      averageLinesRemoved += linesRemoved;
+
       const author = details.data.user?.login;
 
       totalPullRequestsEvaluated++;
@@ -113,11 +128,6 @@ function toReadableTimeDelta(t1?: string | null, t2?: string | null): string {
       const mergedAt = details.data.merged_at;
       const ttm = toReadableTimeDelta(mergedAt, details.data.created_at);
       averageTimeToMerge += toMsDiff(mergedAt, details.data.created_at);
-
-      const linesAdded = details.data.additions;
-      const linesRemoved = details.data.deletions;
-      averageLinesAdded += linesAdded;
-      averageLinesRemoved += linesRemoved;
 
       console.log(`${title}
 Author: ${author}
